@@ -46,7 +46,13 @@ variable "os_sku" {
 }
 variable "eviction_policy" {
   type = string
-
+  # Only meaningful when priority = "Spot". It was added to this module AFTER the
+  # tag templates pin, with no default, which made every Aks-nodepool plan fail
+  # with "No value for required variable". null == omitted == the behaviour at the
+  # pinned tag. Reverting the module instead is not an option here: the older
+  # source does not validate against azurerm 4.x, which renamed several node-pool
+  # arguments.
+  default = null
 }
 variable "vnet_subnet_id" {
   description = "The ID of the Subnet where this Node Pool should exist."
